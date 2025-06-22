@@ -13,8 +13,15 @@ app.use(express.json());
 app.use(cookieParser());
 
 
+const corsOptions = {
+  // CAMBIO: No uses '*', especifica el origen de tu app Ionic.
+  origin: 'http://localhost:4200', // O el puerto que use `ionic serve`
+  
+  // NUEVO: Esta opción es OBLIGATORIA para que las cookies funcionen.
+  credentials: true 
+};
 
-//app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(helmet());
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
 

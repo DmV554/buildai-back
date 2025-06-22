@@ -19,7 +19,7 @@ export default (sequelize) => {
       comment: 'Name of the component (e.g., NVIDIA RTX 4070 Super).'
     },
     componentType: {
-      type: DataTypes.ENUM('CPU', 'GPU', 'Motherboard', 'RAM', 'PSU', 'SSD', 'Case', 'Cooler'),
+      type: DataTypes.ENUM('CPU', 'GPU', 'Motherboard', 'RAM', 'PSU', 'SSD', 'Case', 'Cooling'),
       allowNull: false,
       comment: 'The type of the hardware component.'
     },

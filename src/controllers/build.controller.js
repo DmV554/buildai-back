@@ -1,5 +1,6 @@
 import db from '../models/index.js';
 import { generateAiBuild } from '../services/gemini.service.js';
+import { Op } from 'sequelize'; // Importa 'Op' desde sequelize
 
 export const createAiBuild = async (req, res) => {
   // Gracias al middleware 'protect', ya tenemos acceso a req.user.id
@@ -14,15 +15,23 @@ export const createAiBuild = async (req, res) => {
   const t = await db.sequelize.transaction();
 
   try {
-    // 1. RAG: Pre-filtrado de componentes (versión simple para el prototipo)
-    const candidates = await db.Component.findAll({
-      where: { price: { [db.sequelize.Op.lte]: budget * 0.7 } } // Filtro básico
-    });
+    // CORRECCIÓN: Se eliminó el filtro 'where' que causaba el error.
+    // El error 'column Component.price does not exist' indica que la tabla 'Components'
+    // en tu base de datos no tiene una columna llamada 'price'.
+    // Para que la aplicación funcione, se ha eliminado este pre-filtrado.
+    // La IA seguirá considerando el presupuesto ya que se le pasa en el prompt.
+    //
+    // SOLUCIÓN A LARGO PLAZO: Debes añadir una columna 'price' a tu modelo 'Component'
+    // y ejecutar una migración en tu base de datos para que esta consulta funcione.
+    const candidates = await db.Component.findAll();
     
     const curatedComponents = {
         cpus: candidates.filter(c => c.componentType === 'CPU'),
         gpus: candidates.filter(c => c.componentType === 'GPU'),
-        // ... (añadir otros tipos de componentes)
+        motherboards: candidates.filter(c => c.componentType === 'Motherboard'),
+        ram: candidates.filter(c => c.componentType === 'RAM'),
+        ssds: candidates.filter(c => c.componentType === 'SSD'),
+        psus: candidates.filter(c => c.componentType === 'PSU'),
     };
 
     // 2. Construcción del Prompt
